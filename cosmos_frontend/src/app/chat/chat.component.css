@@ -1,0 +1,106 @@
+/* Container for the chat messages */
+.chat-container {
+    max-width: 80%;
+    margin: 0 auto;
+    overflow-y: auto;
+    height: 80vh;
+    background: linear-gradient(135deg, #44a08d, #093637);
+    position: relative; /* Add this to make tooltip positioning relative */
+  }
+  
+  h1{
+    text-align: center;
+    margin: 10px;
+    color: #FCE38A;
+  }
+  /* Chat messages style */
+  .chat-message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+  
+  /* User message style */
+  .user {
+    background-color: #FCE38A;
+    border-radius: 10px 10px 0 10px;
+    padding: 8px 12px;
+    margin-right: 5px;
+    align-self: flex-end;
+    max-width: 70%;
+    word-break: break-word;
+    margin-left: 30%;
+    position: relative; /* Add this to make tooltip positioning relative */
+  }
+  
+  /* Response message style */
+  .response {
+    background-color: #EAFFD0;
+    border-radius: 10px 10px 10px 0;
+    padding: 8px 12px;
+    margin-left: 5px;
+    align-self: flex-start;
+    max-width: 70%;
+    word-break: break-word;
+    margin-right: 30%;
+    position: relative; /* Add this to make tooltip positioning relative */
+  }
+  
+  /* Apply margin to response messages to separate them from the user messages */
+  .response {
+    margin-top: 5px;
+  }
+  
+  /* Tooltip-like styling for user and response messages */
+  .chat-message::before {
+    content: ''; /* Required for pseudo-element */
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    padding: 5px 8px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .chat-message:hover::before {
+    display: block;
+    content: attr(data-tooltip); /* Add the tooltip text here */
+  }
+  
+  /* Chat input and button style */
+  .user-input {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .user-input input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    font-size: 16px;
+    border-bottom-left-radius: 0; /* Add this to remove border radius at the bottom left */
+    border-bottom-right-radius: 0; /* Add this to remove border radius at the bottom right */
+  }
+  
+  .user-input button {
+    background-color: #95E1D3;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .user-input button:hover {
+    background-color: #7CBEB5;
+  }
+  
