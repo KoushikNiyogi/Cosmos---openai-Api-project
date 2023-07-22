@@ -6,11 +6,16 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ChatService {
-  private backendUrl = 'http://localhost:5000/query';
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { }
-
-  postQuery(query: string): Observable<any> {
-    return this.http.post<any>(this.backendUrl, { query });
+  // Define the getSingleChat method to fetch chat history for a specific chat ID
+  getSingleChat(chatId: string) {
+    return this.http.get<any>(`http://localhost:5000/get_single_chat/${chatId}`);
   }
+
+  // Define the postQuery method to send queries to the backend
+  postQuery(chatId: string, query: string) {
+    return this.http.post<any>(`http://localhost:5000/query/${chatId}`, { query: query });
+  }
+  
 }

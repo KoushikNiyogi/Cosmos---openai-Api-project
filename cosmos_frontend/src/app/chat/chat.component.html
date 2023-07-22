@@ -1,13 +1,16 @@
 <div class="chat-container">
   <h1>Cosmos Chatbot</h1>
   <div *ngFor="let chat of chatHistory" class="chat-message">
-    <p class="user">{{ chat.user }}</p>
-    <ng-container *ngIf="chat.response">
-      <div  class="response">
-      <p *ngFor="let responsePart of chat.response.split('\n')">{{ responsePart }}</p>
-    </div>
+    <ng-container *ngIf="chat.type === 'query'">
+      <p class="user">{{ chat.msg }}</p>
+    </ng-container>
+    <ng-container *ngIf="chat.type === 'response'">
+      <div class="response">
+        <p *ngFor="let responsePart of chat.msg.split('\n\n')">{{ responsePart }}</p>
+      </div>
     </ng-container>
   </div>
+  
 </div>
 
 <div class="user-input">

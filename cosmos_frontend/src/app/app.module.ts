@@ -6,18 +6,28 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ChatComponent } from './chat/chat.component';
 import { ChatHomeComponent } from './chat-home/chat-home.component';
+import { RegisterComponent } from './register/register.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+import { LoginComponent } from './login/login.component';
+import { ChatListComponent } from './chat-list/chat-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ChatComponent,
     ChatHomeComponent,
+    RegisterComponent,
+    LoginComponent,
+    ChatListComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule, // Add the FormsModule to the imports
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,18 @@
+<!-- chat-list.component.html -->
+
+<div class="chat-list-container">
+  <h2>List of Chats</h2>
+  <ul class="chat-list">
+    <li class="chat-item" *ngFor="let chat of chats; let i = index" (click)="goToChat(chat.chatid)">
+      <span class="chat-item-serial">{{ i + 1 }}</span>
+      {{ chat.chat_name }}
+    </li>
+  </ul>
+
+  <!-- Input box for adding a new chat -->
+  <div class="add-chat-container">
+    <input type="text" placeholder="Enter chat name" [(ngModel)]="newChatName" />
+    <button (click)="addChat()">Submit</button>
+  </div>
+  
+</div>
