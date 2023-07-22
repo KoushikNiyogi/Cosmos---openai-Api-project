@@ -4,15 +4,42 @@ import openai
 from dotenv import load_dotenv
 import requests
 from flask_cors import CORS
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+import uuid
+from bson.json_util import dumps
+
 
 app = Flask(__name__)
 CORS(app,origins=["*"])
 load_dotenv()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
+MONGO_URL = os.environ.get("MONGO_URL")
+
+client = MongoClient(MONGO_URL)
+db = client['cosmos-Flask']
+user_collection = db["users"]
+chat_collection = db["chats"]
+
+def serialize_doc(doc):
+    doc['_id'] = str(doc['_id'])
+    doc["chatid"] = str(doc["chatid"])
+    doc["user_id"] = str(doc["user_id"])
+    return doc
+
+def serialize_user(doc):
+    print(doc)
+    doc['_id'] = str(doc['_id'])
+    return doc
+
 def get_response(query):
      # System message with an example to set the context and instruct the model
-    prompt = f"""You are a social media influencer, focusing on parenting and children. Your task is to generate answers to questions asked by the followers. Responses should be contextually relevant and information should be accurate. Responses tone should match with influencers' answer examples and answers should be non-technical, research-based, and heart to heart manner. You can also provide examples to illustrate the response.
+    prompt = f"""You are a social media influencer with a focus on parenting and children. Your role is to provide thoughtful and engaging responses to questions asked by your followers. The information you share should be accurate, non-technical, and research-based, delivered in a heart-to-heart manner. Your responses should match the tone and style of an influencer, providing contextually relevant answers that resonate with your audience.
+
+    To enhance your responses, you can incorporate examples and personal anecdotes to illustrate your points. When clarifying questions arise, feel free to ask 2-3 follow-up questions for better clarity, allowing you to tailor your answers to each individual's needs.
+
+    Remember that your responses should be presented in paragraph form, avoiding bullet or numbered points, and refraining from using headings. This format will create a more engaging and seamless reading experience for your audience.
 
     Example: User - user : 'I have two daughters. One is 8 years and other is 3.5 years old.
     Elder one is little becoming inferior. She afraid of to asking questions. She is afraid that she will be scolded if she asks questions. That’s why she doesn’t ask questions. Whether it’s studies or other things. We are also at mistake as parents. What should I do? She can’t talk to anyone without fear. '
@@ -91,11 +118,109 @@ def get_response(query):
 @app.route("/query",methods = ["POST"])
 def post_query():
     data = request.get_json()
+    query = data["query"]
+    response = get_response(query)
+    return jsonify({"msg" : {"query" : query,"response" : response}})
+
+@app.route("/register",methods=["POST"])
+def post_user():
+    new_registration = request.get_json()
+    new_registration["chat"] = {}
+    find_user = user_collection.find_one({"email" : new_registration["email"]})
+    if find_user is not None:
+        return jsonify({"msg" : "User is already present!!"})
+    else:
+        result = user_collection.insert_one(new_registration)
+        
+        # Convert the inserted document's ObjectId to a string representation
+        new_registration['_id'] = str(result.inserted_id)
+
+        return jsonify({"msg": "New User Registered!!", "User": new_registration})
+
+
+
+@app.route("/login",methods=["POST"])
+def login_user():
+    user_login = request.get_json()
+    print(user_login)
+    find_user = user_collection.find_one({"email" : user_login["email"]})
+    print(find_user)
+    serialized_user = serialize_user(find_user)
+    if find_user is not None:
+        if find_user["password"] == user_login["password"]:
+            return jsonify({"msg":"Login Successful!!","user" : serialized_user})
+        else:
+            return jsonify({"msg": "Password is Wrong!!"})
+    else: 
+        return jsonify({"msg" : "User not found. Please register!!"})
+    
+
+
+@app.route("/add_chat",methods = ["POST"])
+def add_new_chat():
+    request_data = request.get_json()
+    print(request_data);
+    new_chat = {
+        "chatid" :  str(uuid.uuid4()),
+        "chat_name" : request_data["name"],
+        "chat_history" : [],
+        "user_id" : request_data["_id"]
+    }
+    chat_collection.insert_one(new_chat)
+    return jsonify({"msg" : "New chat has been added"})
+
+def serialize_docs(docs):
+    serialized_docs = []
+    for doc in docs:
+        doc['_id'] = str(doc['_id'])
+        doc["chatid"] = str(doc["chatid"])
+        doc["user_id"] = str(doc["user_id"])
+        serialized_docs.append(doc)
+    return serialized_docs
+
+@app.route("/get_chat/<user_id>", methods=["GET"])
+def get_chat(user_id):
+     # Find all chat documents with the given user_id
+    chats = chat_collection.find({"user_id": user_id})
+
+    serialized_users = serialize_docs(chats)
+
+   
+    return jsonify({"chats": serialized_users})
+
+
+
+@app.route("/get_single_chat/<chatid>", methods=["GET"])
+def get_single_chat(chatid):
+    chat = chat_collection.find_one({"chatid": chatid})
+    print(chat, chatid)
+    if chat:
+        serialized_chat = serialize_doc(chat)
+        return jsonify({"chat": serialized_chat})
+    else:
+        return jsonify({"message": "Chat not found"})
+    
+@app.route("/query/<chatid>", methods=["POST"])
+def post_query_chat(chatid):
+    data = request.get_json()
     print(data)
     query = data["query"]
     response = get_response(query)
-    return jsonify({"msg" : response})
-    
+
+    # Create query and response documents
+    query_doc = {"type": "query", "msg": query}
+    response_doc = {"type": "response", "msg": response}
+
+    # Push the documents to the chat's chathistory array
+    chat_collection.update_one(
+        {"chatid": chatid},
+        {"$push": {"chat_history": {"$each": [query_doc, response_doc]}}}
+    )
+    chat = chat_collection.find_one({"chatid": chatid})
+    serialized_chat = serialize_doc(chat)
+
+    return jsonify({"chat": serialized_chat})
+   
 
 if __name__ == "__main__":
     app.run()
