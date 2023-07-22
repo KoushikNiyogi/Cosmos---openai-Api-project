@@ -128,7 +128,7 @@ def post_user():
     new_registration["chat"] = {}
     find_user = user_collection.find_one({"email" : new_registration["email"]})
     if find_user is not None:
-        return jsonify({"msg" : "User is already present!!"})
+        return jsonify({"msg" : "User is already present!!"}),400
     else:
         result = user_collection.insert_one(new_registration)
         
@@ -150,9 +150,9 @@ def login_user():
         if find_user["password"] == user_login["password"]:
             return jsonify({"msg":"Login Successful!!","user" : serialized_user})
         else:
-            return jsonify({"msg": "Password is Wrong!!"})
+            return jsonify({"msg": "Password is Wrong!!"}),400
     else: 
-        return jsonify({"msg" : "User not found. Please register!!"})
+        return jsonify({"msg" : "User not found. Please register!!"}),400
     
 
 
