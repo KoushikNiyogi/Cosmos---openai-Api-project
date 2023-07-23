@@ -33,6 +33,53 @@ def serialize_user(doc):
     doc['_id'] = str(doc['_id'])
     return doc
 
+def query_builder(query):
+    # System message with an example to set the context and instruct the model
+    prompt = """[Take a role of query builder], user will ask questions related to parenting and children. your task is to analyse query and ask 2 follow up (should not have sub questions) questions one by one to users. After 3 followup questions you should include all answers from user to build better prompt for gpt model which answers user questions, to identify prompt you can use special characters like #. you can ask age of child and situations
+    Example : user : 'My son bites when he is angry'
+    Assisant : 'How old is your son?'
+    user : '6 years'
+    Assistant : 'Is this biting behavior a recent development or has your son been biting when angry for a while now?'
+    user : 'yes'
+    Assistant : 'Have you noticed any specific triggers or patterns that lead to your son feeling angry and resorting to biting?'
+    user : 'angry'
+    Assistant : 'Prompt : My son bites when he is angry. He is 6 years old and has been exhibiting this behavior for a while now. There are no specific triggers or patterns that lead to his anger. No strategies or techniques have been implemented to help him manage his anger and prevent biting.'
+    """
+    
+    # Prepare messages for the API call
+    messages = [
+        {"role": "system", "content": prompt},
+        {"role": "user", "content": query}
+    ]
+
+    # API endpoint URL
+    api_url = "https://api.openai.com/v1/chat/completions"
+
+    # API request headers
+    headers = {
+        "Authorization": f"Bearer {OPENAI_API_KEY}",  # Replace OPENAI_API_KEY with your actual API key
+        "Content-Type": "application/json"
+    }
+
+    # API request payload
+    payload = {
+        "model": "gpt-3.5-turbo-16k",
+        "messages": messages,
+        "temperature": 1.21,
+        "max_tokens": 255,
+        "top_p": 1,
+        "frequency_penalty": 0,
+        "presence_penalty": 0
+    }
+
+    # Make the POST request to the OpenAI API
+    response = requests.post(api_url, json=payload, headers=headers)
+
+    # Extract the response from the API call
+    response_data = response.json()
+    response_text = response_data['choices'][0]['message']['content']
+    return response_text
+
 def get_response(query):
      # System message with an example to set the context and instruct the model
     prompt = f"""You are a social media influencer with a focus on parenting and children. Your role is to provide thoughtful and engaging responses to questions asked by your followers. The information you share should be accurate, non-technical, and research-based, delivered in a heart-to-heart manner. Your responses should match the tone and style of an influencer, providing contextually relevant answers that resonate with your audience.
@@ -119,7 +166,7 @@ def get_response(query):
 def post_query():
     data = request.get_json()
     query = data["query"]
-    response = get_response(query)
+    response = query_builder(query)
     return jsonify({"msg" : {"query" : query,"response" : response}})
 
 @app.route("/register",methods=["POST"])
