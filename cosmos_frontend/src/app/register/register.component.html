@@ -16,4 +16,11 @@
       <button type="submit">Register</button>
     </form>
   </div>
+
+  <div class="toast-container" *ngIf="showToast">
+  <div class="toast toast-error">
+    <span class="toast-message">Registration failed. Please try again later.</span>
+    <button class="toast-close-button" (click)="closeToast()">&times;</button>
+  </div>
+</div>
   

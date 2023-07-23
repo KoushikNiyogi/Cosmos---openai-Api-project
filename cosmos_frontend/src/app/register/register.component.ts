@@ -12,6 +12,7 @@ export class RegisterComponent {
   name: string = '';
   email: string = '';
   password: string = '';
+  showToast: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -21,14 +22,21 @@ export class RegisterComponent {
 
   onSubmit() {
     const userData = { name: this.name, email: this.email, password: this.password };
-    this.http.post<any>('http://localhost:5000/register', userData).subscribe(
+    this.http.post<any>('https://cosmos-backend-zhnd.onrender.com/register', userData).subscribe(
       (response) => {
         this.router.navigate(['/login']); // Redirect to login page on successful registration
       },
       (error) => {
-        this.toastr.error('Registration failed. Please try again later.'); // Display toast message on failure
+        this.showToast = true;
+        console.error('Login failed:', error);
+        setTimeout(() => {
+          this.showToast = false;
+        }, 3000);
         console.error('Error during registration:', error);
       }
     );
+  }
+  closeToast() {
+    this.showToast = false;
   }
 }

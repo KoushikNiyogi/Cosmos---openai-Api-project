@@ -5,12 +5,14 @@ import { ChatComponent } from './chat/chat.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ChatListComponent } from './chat-list/chat-list.component';
+import { AuthGuard } from './auth.guard'
 
 const routes: Routes = [
+  
+  { path: '', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'login', component: LoginComponent },
-  {path:'chatlist',component: ChatListComponent},
-  { path: 'chat/:chatid', component: ChatComponent },
+  {path:'chatlist',component: ChatListComponent, canActivate: [AuthGuard]},
+  { path: 'chat/:chatid', component: ChatComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '', pathMatch: 'full' }, // Redirect to home page if route not found
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];

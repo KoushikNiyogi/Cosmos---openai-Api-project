@@ -26,7 +26,7 @@ export class ChatListComponent implements OnInit {
 
       // Make a request to the backend endpoint to get the list of chats
       if (userId) {
-        this.http.get<any>(`http://localhost:5000/get_chat/${userId}`).subscribe(
+        this.http.get<any>(`https://cosmos-backend-zhnd.onrender.com/get_chat/${userId}`).subscribe(
           (response) => {
             this.chats = response.chats;
           },
@@ -52,7 +52,7 @@ export class ChatListComponent implements OnInit {
       // Make a request to the backend endpoint to add the new chat
       if (userId && this.newChatName) {
         this.http
-          .post<any>(`http://localhost:5000/add_chat`, { name: this.newChatName, _id: userId })
+          .post<any>(`https://cosmos-backend-zhnd.onrender.com/add_chat`, { name: this.newChatName, _id: userId })
           .subscribe(
             (response) => {
               // Update the chat list after successful addition

@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 export class LoginComponent {
   email: string = '';
   password: string = '';
+  showToast: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -20,7 +21,7 @@ export class LoginComponent {
 
   onSubmit() {
     const userData = { email: this.email, password: this.password };
-    this.http.post<any>('http://localhost:5000/login', userData).subscribe(
+    this.http.post<any>('https://cosmos-backend-zhnd.onrender.com/login', userData).subscribe(
       (response) => {
         // Redirect to chat page on successful login
         console.log(response)
@@ -29,8 +30,11 @@ export class LoginComponent {
       },
       (error) => {
         // Display toast message on login failure
-        this.toastr.error('Invalid email or password. Please try again.');
+        this.showToast = true;
         console.error('Login failed:', error);
+        setTimeout(() => {
+          this.showToast = false;
+        }, 3000);
       }
     );
   }

@@ -47,3 +47,45 @@ button {
 button:hover {
     background-color: #093637;
 }
+
+/* Style for Toastr container */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+  
+  /* Style for Toastr error toast */
+  .toast.toast-error {
+    background-color: #f44336;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 300px;
+  }
+  
+  /* Close button style for Toastr error toast */
+  .toast.toast-error button.toast-close-button {
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+  }
+  
+  /* Close button hover style */
+  .toast.toast-error button.toast-close-button:hover {
+    color: #f9f9f9;
+  }
+  

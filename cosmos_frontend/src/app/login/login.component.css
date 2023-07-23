@@ -46,4 +46,24 @@
   button:hover {
     background-color: #093637;
   }
+
+  .toast-container {
+    position: fixed;
+    top: 50px; /* Adjust the top position as needed */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px; /* Set the desired width of the toast container */
+    box-sizing: border-box;
+    z-index: 9999; /* Ensure the container is above other elements */
+  }
+  
+  /* Style for Toastr error toast */
+  .toast {
+    background-color: #f44336; /* Set the desired background color for error toast */
+    color: #fff; /* Set the desired text color for error toast */
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
   

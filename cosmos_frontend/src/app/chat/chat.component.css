@@ -3,7 +3,7 @@
     max-width: 80%;
     margin: 0 auto;
     overflow-y: auto;
-    height: 80vh;
+    height: 70vh;
     background: linear-gradient(135deg, #44a08d, #093637);
     position: relative; /* Add this to make tooltip positioning relative */
   }

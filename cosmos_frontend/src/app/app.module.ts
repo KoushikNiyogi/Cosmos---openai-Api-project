@@ -11,6 +11,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { LoginComponent } from './login/login.component';
 import { ChatListComponent } from './chat-list/chat-list.component';
+import { AuthGuard } from './auth.guard';
+import { NavbarComponent } from './navbar/navbar.component'; // Import AuthGuard
 
 @NgModule({
   declarations: [
@@ -19,7 +21,8 @@ import { ChatListComponent } from './chat-list/chat-list.component';
     ChatHomeComponent,
     RegisterComponent,
     LoginComponent,
-    ChatListComponent
+    ChatListComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +32,7 @@ import { ChatListComponent } from './chat-list/chat-list.component';
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
   ],
-  providers: [],
+  providers: [AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
